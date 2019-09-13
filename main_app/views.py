@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Fantasticbeast
+from django.views.generic import ListView, DetailView
+from .models import Fantasticbeast, Toy
 from .forms import FeedingForm
 
 # Define home view
@@ -18,10 +19,13 @@ def fantasticbeasts_index(request):
 
 def fantasticbeasts_detail(request, fantasticbeast_id):
   fantasticbeast = Fantasticbeast.objects.get(id=fantasticbeast_id)
+  toys_beast_doesnt_have = Toy.objects.exclude(id__in = fantasticbeast.toys.all().values_list('id'))
   feeding_form = FeedingForm()
   return render(request, 'fantasticbeasts/detail.html', { 
     'fantasticbeast' : fantasticbeast, 
-    'feeding_form': feeding_form})
+    'feeding_form': feeding_form,
+    'toys': toys_beast_doesnt_have
+    })
 
 def add_feeding(request, fantasticbeast_id):
   form = FeedingForm(request.POST)
@@ -42,3 +46,25 @@ class FantasticbeastUpdate(UpdateView):
 class FantasticbeastDelete(DeleteView):
   model = Fantasticbeast
   success_url = '/fantasticbeasts/'
+
+class ToyList(ListView):
+  model = Toy
+
+class ToyDetail(DetailView):
+  model = Toy
+
+class ToyCreate(CreateView):
+  model = Toy
+  fields = '__all__'
+
+class ToyUpdate(UpdateView):
+  model = Toy
+  fields = ['name', 'color']
+
+class ToyDelete(DeleteView):
+  model = Toy
+  success_url = '/toys/'
+
+def assoc_toy(request, fantasticbeast_id, toy_id):
+  Fantasticbeast.objects.get(id=fantasticbeast_id).toys.add(toy_id)
+  return redirect('detail', fantasticbeast_id=fantasticbeast_id)
