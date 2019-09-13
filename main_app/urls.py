@@ -10,4 +10,5 @@ urlpatterns = [
     path('fantasticbeasts/create/', views.FantasticbeastCreate.as_view(), name='fantasticbeasts_create'),
     path('fantasticbeasts/<int:pk>/update/', views.FantasticbeastUpdate.as_view(), name='fantasticbeasts_update'),
     path('fantasticbeasts/<int:pk>/delete/', views.FantasticbeastDelete.as_view(), name='fantasticbeasts_delete'),
+    path('fantasticbeasts/<int:fantasticbeast_id>/add_feeding', views.add_feeding, name='add_feeding'),
 ]
